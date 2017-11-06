@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.sc.LcbAliveService"
+        <service android:name="com.sc.LService"
             android:enabled="true"
             android:exported="true"
              >

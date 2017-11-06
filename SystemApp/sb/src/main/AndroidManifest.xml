@@ -17,7 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>-->
-        <service android:name="com.alive.coretwo.AssistantBService"
+        <service android:name="com.alive.ct.BService"
             android:enabled="true"
             android:exported="true"
             android:process=":remote" >

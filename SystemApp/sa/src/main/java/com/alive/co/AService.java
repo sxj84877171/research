@@ -1,4 +1,4 @@
-package com.alive.coreone;
+package com.alive.co;
 
 import android.app.Notification;
 import android.app.Service;
@@ -11,9 +11,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.alive.core.ICat;
 
 
 /**
@@ -21,14 +18,14 @@ import com.alive.core.ICat;
  *
  * Create by jiangdongguo on 2016-11-23 上午10:57:59
  */
-public class AssistantAService extends Service {
+public class AService extends Service {
 	private final String B_PackageName = "com.google.system.sb";
-	private final String B_ServicePath = "com.alive.coretwo.AssistantBService";
+	private final String B_ServicePath = "com.alive.ct.BService";
 	private final String Lcb_PackageName = "com.google.system.sc";
-	private final String Lcb_ServicePath = "com.sc.LcbAliveService";
+	private final String Lcb_ServicePath = "com.sc.LService";
 	private ICat mBinderFromB;
 
-	private HandlerThread handlerThread = new HandlerThread("AssistantAService");
+	private HandlerThread handlerThread = new HandlerThread("AService");
 	private Handler handler ;
 	private Runnable runnable = new Runnable() {
 		@Override

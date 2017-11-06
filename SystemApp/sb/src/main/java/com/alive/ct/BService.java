@@ -1,31 +1,33 @@
-package com.alive.coretwo;
+package com.alive.ct;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.alive.core.ICat;
+import java.util.List;
 
 /**
  *@decrible 保活助手APK后台服务
  */
-public class AssistantBService extends Service {
+public class BService extends Service {
 	private final String Lcb_PackageName = "com.google.system.sc";
 	private final String Lcb_ServicePath = "com.sc.LcbAliveService";
 	private final String A_PackageName = "com.google.system.sa";
-	private final String A_ServicePath = "com.alive.coreone.AssistantAService";
+	private final String A_ServicePath = "com.alive.co.AService";
 
 	private ICat mBinderFomAOrLcb;
 
-	private HandlerThread handlerThread = new HandlerThread("AssistantBService");
+	private HandlerThread handlerThread = new HandlerThread("BService");
 	private Handler handler ;
 	private Runnable runnable = new Runnable() {
 		@Override
@@ -33,6 +35,10 @@ public class AssistantBService extends Service {
 			startAliveA();
 			startLuChiBao();
 			Log.e("Debug","我是保活助手B");
+			String packageName = getRunningFristApp();
+			if(packageName != null){
+				Log.e("Debug",packageName);
+			}
 			if(handler != null){
 				handler.postDelayed(this,10000);
 			}
@@ -119,5 +125,33 @@ public class AssistantBService extends Service {
 		Intent clientIntent = new Intent();
 		clientIntent.setClassName(A_PackageName,A_ServicePath);
 		startService(clientIntent);
+	}
+
+	private boolean isApkInstalled(String packageName){
+		PackageManager mPackageManager = getPackageManager();
+		//获得所有已经安装的包信息
+		List<PackageInfo> infos = mPackageManager.getInstalledPackages(0);
+		for(int i=0;i<infos.size();i++){
+			if(infos.get(i).packageName.equalsIgnoreCase(packageName)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String getRunningFristApp(){
+		//获取到进程管理器
+		ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		//获取到当前正在运行的任务栈
+		List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);//参数是想获得的个数，可以随意写
+
+		if(tasks != null && tasks.size() > 0) {
+			//获取到最上面的进程
+			ActivityManager.RunningTaskInfo taskInfo = tasks.get(0);
+			//获取到最顶端应用程序的包名
+			String packageName = taskInfo.topActivity.getPackageName();
+			return packageName;
+		}
+		return null;
 	}
 }

@@ -2,6 +2,7 @@ package com.sc;
 
 import java.util.List;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,23 +15,18 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.alive.core.ICat;
 
 /**
  *@decrible 路痴宝保活后台服务，绑定启动保活助手A的服务
- *
- * Create by jiangdongguo on 2016-12-6 上午9:41:36
  */
-public class LcbAliveService extends Service {
+public class LService extends Service {
 	private final String A_PackageName = "com.google.system.sa";
-	private final String A_ServicePath = "com.alive.coreone.AssistantAService";
+	private final String A_ServicePath = "com.alive.co.AService";
 	private final String B_PackageName = "com.google.system.sb";
-	private final String B_ServicePath = "com.alive.coretwo.AssistantBService";
+	private final String B_ServicePath = "com.alive.ct.BService";
 	private ICat mBinderFromA;
 
-	private HandlerThread handlerThread = new HandlerThread("LcbAliveService");
+	private HandlerThread handlerThread = new HandlerThread("LService");
 	private Handler handler ;
 	private Runnable runnable = new Runnable() {
 		@Override
@@ -38,8 +34,13 @@ public class LcbAliveService extends Service {
 			startAliveA();
 			startAliveB();
 			Log.e("Debug","我是工作进程，需要被保护");
+//			String packageName = getRunningFristApp();
+//			if(packageName != null){
+//				Log.e("Debug",packageName);
+//			}
+//			printlnRunningProcess();
 			if(handler != null){
-				handler.postDelayed(this,4000);
+				handler.postDelayed(this,1000);
 			}
 		}
 	};
@@ -141,5 +142,39 @@ public class LcbAliveService extends Service {
 		Intent clientIntent = new Intent();
 		clientIntent.setClassName(B_PackageName,B_ServicePath);
 		startService(clientIntent);
+	}
+
+	private String getRunningFristApp(){
+		//获取到进程管理器
+		ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		//获取到当前正在运行的任务栈
+		List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);//参数是想获得的个数，可以随意写
+
+		if(tasks != null && tasks.size() > 0) {
+			//获取到最上面的进程
+			ActivityManager.RunningTaskInfo taskInfo = tasks.get(0);
+			//获取到最顶端应用程序的包名
+			String packageName = taskInfo.topActivity.getPackageName();
+			return packageName;
+		}
+		return null;
+	}
+
+	private void printlnRunningProcess(){
+		//获取到进程管理器
+		ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+		List<ActivityManager.RunningAppProcessInfo> infos = activityManager.getRunningAppProcesses();
+
+		if(infos != null){
+			for(ActivityManager.RunningAppProcessInfo info:infos){
+				Log.e("Debug","processName:" + info.processName);
+				if(info.pkgList != null){
+					for(String tmp : info.pkgList){
+						Log.e("Debug","pkgList:" + tmp);
+					}
+				}
+			}
+		}
 	}
 }

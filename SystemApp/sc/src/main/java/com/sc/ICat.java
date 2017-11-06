@@ -2,7 +2,7 @@
  * This file is auto-generated.  DO NOT MODIFY.
  * Original file: E:\\Android\\AndroidProjectNew\\AliveAssistantA\\src\\com\\alive\\core\\ICat.aidl
  */
-package com.alive.core;
+package com.sc;
 public interface ICat extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
